@@ -35,6 +35,9 @@ name = "bitflags"
 version = "2.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b048fb63fd8b5923fc5aa7b340d8e156aec7ec02f0c78fa8a6ddc2613f6f71de"
+dependencies = [
+ "serde",
+]
 
 [[package]]
 name = "bumpalo"
@@ -322,6 +325,10 @@ dependencies = [
  "oxc_regular_expression",
  "oxc_span",
  "oxc_syntax",
+ "serde",
+ "serde_json",
+ "tsify",
+ "wasm-bindgen",
 ]
 
 [[package]]
@@ -398,6 +405,9 @@ name = "oxc_index"
 version = "0.31.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "cb46cc4ce3d5820ad5e5737f84f5206307b293f9984f9da219ac51ccdc0ea4c8"
+dependencies = [
+ "serde",
+]
 
 [[package]]
 name = "oxc_mangler"
@@ -447,7 +457,10 @@ dependencies = [
  "oxc_span",
  "phf",
  "rustc-hash",
+ "serde",
+ "tsify",
  "unicode-id-start",
+ "wasm-bindgen",
 ]
 
 [[package]]
@@ -517,7 +530,10 @@ dependencies = [
  "phf",
  "rustc-hash",
  "ryu-js",
+ "serde",
+ "tsify",
  "unicode-id-start",
+ "wasm-bindgen",
 ]
 
 [[package]]

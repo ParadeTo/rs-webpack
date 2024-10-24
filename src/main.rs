@@ -58,7 +58,7 @@ fn main() -> std::io::Result<()> {
     let mut program = parser_ret.program;
 
     println!("Parse result");
-    println!("{:?}", program);
+    println!("{}", serde_json::to_string_pretty(&program).unwrap());
 
     // 2 Semantic Analyze
     let semantic = SemanticBuilder::new(&source_text)

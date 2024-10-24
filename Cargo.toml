@@ -8,7 +8,7 @@ edition = "2021"
 [dependencies]
 itertools = "0.13.0"
 oxc_allocator = {version = "0.31.0", features = ["serialize"]}
-oxc_ast = "0.31.0"
+oxc_ast = {version = "0.31.0", features = ["serialize"]}
 oxc_codegen = "0.31.0"
 oxc_parser = "0.31.0"
 oxc_semantic = "0.31.0"
