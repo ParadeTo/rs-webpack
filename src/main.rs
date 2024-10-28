@@ -1,11 +1,11 @@
-use std::{env, path::Path};
+use std::env;
 
 use compiler::Compiler;
 use config::{Config, Output};
 
 mod compiler;
 mod config;
-mod demo;
+// mod demo;
 mod template;
 mod transform;
 

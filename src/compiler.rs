@@ -10,8 +10,7 @@ use sailfish::TemplateSimple;
 use std::{
     cell::RefCell,
     collections::HashMap,
-    env,
-    fs::{self, File},
+    fs::{create_dir_all, read_to_string, File},
     io::Write,
     path::{Path, PathBuf},
     rc::Rc,
@@ -40,19 +39,12 @@ impl Compiler {
         }
     }
 
-    fn get_source(&self, module_path: &PathBuf) -> String {
-        let content =
-            fs::read_to_string(module_path).expect("Should have been able to read the file");
-        content
-    }
-
     fn parse(
         &self,
         module_path: PathBuf,
         parent_path: &Path,
     ) -> (String, Rc<RefCell<Vec<String>>>) {
-        println!("module_path {:?}", &module_path);
-        let source_text = Arc::new(fs::read_to_string(&module_path).unwrap());
+        let source_text = Arc::new(read_to_string(&module_path).unwrap());
         let source_type = SourceType::from_path(&module_path).unwrap();
         // Memory arena where Semantic and Parser allocate objects
         let allocator = Allocator::default();
@@ -140,14 +132,11 @@ impl Compiler {
             modules: &self.modules,
         };
         let code = ctx.render_once().unwrap();
-        println!("{:?}", &main);
-        // 创建目录及其所有父目录
+
         let parent_dir = Path::new(&main).parent().expect("Invalid file path");
-        fs::create_dir_all(parent_dir).expect("create dir error");
+        create_dir_all(parent_dir).expect("create dir error");
         let mut file = File::create(&main).expect("create output error");
         file.write_all(code.as_bytes()).expect("write output error");
-        // fs::write(&main, &code).expect("write output error");
-        self.assets.insert(main.to_str().unwrap().to_owned(), code);
     }
 
     pub fn run(&mut self) {
