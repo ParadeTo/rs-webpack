@@ -1,5 +1,0 @@
-{
-  "dependencies": {
-    "@rs-webpack/binding": "workspace:*"
-  }
-}

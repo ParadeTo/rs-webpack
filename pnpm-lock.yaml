@@ -6,7 +6,7 @@ settings:
 
 importers:
 
-  crates/rs_webpack_binding:
+  crates/rswebpack_binding:
     devDependencies:
       '@napi-rs/cli':
         specifier: ^2.18.4
@@ -15,11 +15,14 @@ importers:
         specifier: ^6.0.1
         version: 6.2.0
 
-  packages/rs-webpack-cli:
+  packages/rswebpack-cli:
     dependencies:
-      '@rs-webpack/binding':
+      '@rswebpack/binding':
         specifier: workspace:*
-        version: link:../../crates/rs_webpack_binding
+        version: link:../../crates/rswebpack_binding
+      yargs-parser:
+        specifier: ^21.1.1
+        version: 21.1.1
 
 packages:
 
@@ -1131,7 +1134,6 @@ packages:
   /yargs-parser@21.1.1:
     resolution: {integrity: sha512-tVpsJW7DdjecAiFpbIB1e3qxIQsE6NoPc5/eTdrbbIC4h0LVsWhnoa3g+m2HclBIujHzsxZ4VJVA+GUuc2/LBw==}
     engines: {node: '>=12'}
-    dev: true
 
   /yargs@17.7.2:
     resolution: {integrity: sha512-7dSzzRQ++CKnNI/krKnYRV7JKKPUXMEh61soaHKg9mrWEhzFWhFnxPxGl+69cD1Ou63C13NUPCnmIcrvqCuM6w==}

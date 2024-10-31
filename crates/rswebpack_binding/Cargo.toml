@@ -1,6 +1,6 @@
 [package]
 edition = "2021"
-name = "rs-webpack_binding"
+name = "rswebpack_binding"
 version = "0.0.0"
 
 [lib]
@@ -10,7 +10,7 @@ crate-type = ["cdylib"]
 # Default enable napi4 feature, see https://nodejs.org/api/n-api.html#node-api-version-matrix
 napi = { version = "2.12.2", default-features = false, features = ["napi4"] }
 napi-derive = "2.12.2"
-rs_webpack_core = { version = "0.1.0", path = "../rs_webpack_core" }
+rswebpack_core = { version = "0.1.0", path = "../rswebpack_core" }
 
 [build-dependencies]
 napi-build = "2.0.1"

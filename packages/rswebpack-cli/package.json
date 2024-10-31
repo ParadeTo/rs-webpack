@@ -1,0 +1,10 @@
+{
+  "name": "@rswebpack/cli",
+  "dependencies": {
+    "@rswebpack/binding": "workspace:*",
+    "yargs-parser": "^21.1.1"
+  },
+  "bin": {
+    "rswebpack": "./index.js"
+  }
+}
