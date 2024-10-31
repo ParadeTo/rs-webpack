@@ -2,7 +2,7 @@
 
 use napi::Result;
 use raw_config::RawConfig;
-use rs_webpack_core::compiler::Compiler;
+use rswebpack_core::compiler::Compiler;
 #[macro_use]
 extern crate napi_derive;
 

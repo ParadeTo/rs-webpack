@@ -1,6 +1,4 @@
-use std::error::Error;
-
-use rs_webpack_core::config::{Config, Output};
+use rswebpack_core::config::{Config, Output};
 
 #[napi(object)]
 pub struct RawOutput {
