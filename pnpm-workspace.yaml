@@ -1,0 +1,3 @@
+packages:
+  - 'packages/*'
+  - 'crates/rswebpack_binding'
