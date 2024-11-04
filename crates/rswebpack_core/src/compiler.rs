@@ -20,16 +20,21 @@ use std::{
 
 use crate::{config::Config, template::OutputTpl, transform::RsWebpackTransform};
 
+
+
 pub struct Compiler {
     config: Config,
     entry_id: String,
     root: String,
     modules: HashMap<String, String>,
     assets: HashMap<String, String>,
+    // plugins: Vec<>
 }
 
 impl Compiler {
     pub fn new(config: Config) -> Compiler {
+        // let test_hook = 
+
         Compiler {
             root: config.root.clone(),
             entry_id: "".to_string(),
