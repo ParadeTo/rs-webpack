@@ -4,3 +4,4 @@
 
 **/.pnpm
 **/node_modules
+.idea
