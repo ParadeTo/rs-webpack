@@ -1,3 +1,8 @@
+use crate::config::Config;
+use crate::plugin::driver::PluginDriver;
+use crate::plugin::BoxPlugin;
+use crate::template::OutputTpl;
+use crate::transform::RsWebpackTransform;
 use itertools::Itertools;
 use oxc_allocator::Allocator;
 use oxc_codegen::{CodeGenerator, CodegenOptions};
@@ -18,22 +23,18 @@ use std::{
     vec,
 };
 
-use crate::{config::Config, template::OutputTpl, transform::RsWebpackTransform};
-
-
-
 pub struct Compiler {
     config: Config,
     entry_id: String,
-    root: String,
+    pub root: String,
     modules: HashMap<String, String>,
     assets: HashMap<String, String>,
-    // plugins: Vec<>
+    plugin_driver: Arc<PluginDriver>,
 }
 
 impl Compiler {
-    pub fn new(config: Config) -> Compiler {
-        // let test_hook = 
+    pub fn new(mut config: Config, plugins: Vec<BoxPlugin>) -> Compiler {
+        let plugin_driver = PluginDriver::new(plugins);
 
         Compiler {
             root: config.root.clone(),
@@ -41,6 +42,7 @@ impl Compiler {
             config,
             modules: HashMap::new(),
             assets: HashMap::new(),
+            plugin_driver,
         }
     }
 
@@ -145,8 +147,10 @@ impl Compiler {
     }
 
     pub fn run(&mut self) {
-        let resolved_entry = Path::new(&self.root).join(&self.config.entry);
-        self.build_module(resolved_entry, true);
-        self.emit_file();
+        let plugin_driver = self.plugin_driver.clone();
+        plugin_driver.compiler_hooks.test.call(self);
+        // let resolved_entry = Path::new(&self.root).join(&self.config.entry);
+        // self.build_module(resolved_entry, true);
+        // self.emit_file();
     }
 }

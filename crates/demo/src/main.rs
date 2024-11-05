@@ -1,57 +1,42 @@
+use rswebpack_core::compiler::Compiler;
+use rswebpack_core::config::{Config, Output};
+use rswebpack_core::hooks::Test;
+use rswebpack_core::plugin::{ApplyContext, Plugin, PluginContext};
 use rswebpack_error::Result;
-use rswebpack_macros::{define_hook, plugin, plugin_hook};
-
-define_hook!(Render: SyncSeries(compilation: &Compilation, source: &mut Source));
-
-struct Compilation {
-    id: u32,
-    render_hook: RenderHook,
-}
-
-struct Source {
-    content: String,
-}
+use rswebpack_macros::{plugin, plugin_hook};
 
 #[plugin]
-#[derive(Default)]
-struct MyRenderPlugin1 {
-    name: String,
-}
+struct TestHookPlugin;
 
-#[plugin_hook(Render for MyRenderPlugin1)]
-fn render1(&self, compilation: &Compilation, source: &mut Source) -> Result<()> {
-    source.content += &self.name;
-    source.content += &compilation.id.to_string();
+#[plugin_hook(Test for TestHookPlugin)]
+fn test(&self, compiler: &mut Compiler) -> Result<()> {
+    println!("Root is {}", compiler.root);
     Ok(())
 }
 
-#[plugin]
-#[derive(Default)]
-struct MyRenderPlugin2 {
-    name: String,
+#[derive(Debug)]
+struct TestPlugin;
+
+impl Plugin for TestPlugin {
+    fn apply(&self, _ctx: PluginContext<&mut ApplyContext>) -> Result<()> {
+        _ctx.context
+            .compiler_hooks
+            .test
+            .tap(test::new(&TestHookPlugin::new_inner()));
+        Ok(())
+    }
 }
 
-#[plugin_hook(Render for MyRenderPlugin2)]
-fn render2(&self, compilation: &Compilation, source: &mut Source) -> Result<()> {
-    source.content += &self.name;
-    source.content += &compilation.id.to_string();
-    Ok(())
-}
+fn main() {
+    let config = Config::new(
+        "test".to_string(),
+        "test".to_string(),
+        Output {
+            path: "out".to_string(),
+            filename: "bundle".to_string(),
+        },
+    );
 
-#[tokio::main]
-async fn main() -> Result<()> {
-    let mut compilation = Compilation {
-        id: 0,
-        render_hook: RenderHook::default(),
-    };
-    let mut source = Source {
-        content: String::new(),
-    };
-    let plugin1 = MyRenderPlugin1::new_inner("plugin1".to_string());
-    let plugin2 = MyRenderPlugin2::new_inner("plugin2".to_string());
-    compilation.render_hook.tap(render1::new(&plugin1));
-    compilation.render_hook.tap(render2::new(&plugin2));
-    compilation.render_hook.call(&compilation, &mut source);
-    println!("{}", source.content);
-    Ok(())
+    let compiler = &mut Compiler::new(config, vec![Box::new(TestPlugin {})]);
+    compiler.run();
 }

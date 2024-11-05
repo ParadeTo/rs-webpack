@@ -214,6 +214,7 @@ dependencies = [
 name = "demo"
 version = "0.1.0"
 dependencies = [
+ "rswebpack_core",
  "rswebpack_error",
  "rswebpack_hook",
  "rswebpack_macros",
@@ -1183,6 +1184,7 @@ dependencies = [
 name = "rswebpack_core"
 version = "0.1.0"
 dependencies = [
+ "async-trait",
  "itertools",
  "oxc_allocator",
  "oxc_ast",
@@ -1193,6 +1195,9 @@ dependencies = [
  "oxc_traverse",
  "pathdiff",
  "pico-args",
+ "rswebpack_error",
+ "rswebpack_hook",
+ "rswebpack_macros",
  "sailfish",
  "serde_json",
 ]

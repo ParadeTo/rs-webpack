@@ -1,5 +1,7 @@
-pub mod compiler;
 pub mod config;
+pub mod hooks;
+pub mod plugin;
 mod template;
 mod transform;
-// mod hooks;
+
+pub mod compiler;
