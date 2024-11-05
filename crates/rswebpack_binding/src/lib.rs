@@ -3,6 +3,8 @@
 use napi::Result;
 use raw_config::RawConfig;
 use rswebpack_core::compiler::Compiler;
+use rswebpack_core::plugin::BoxPlugin;
+
 #[macro_use]
 extern crate napi_derive;
 
@@ -18,8 +20,9 @@ impl RsWebpack {
   #[napi(constructor)]
   pub fn new(raw_config: RawConfig) -> Result<Self> {
     let config = raw_config.try_into().expect("Config transform error");
+    let plugins = vec![];
     Ok(Self {
-      compiler: Box::new(Compiler::new(config)),
+      compiler: Box::new(Compiler::new(config, plugins)),
     })
   }
 
