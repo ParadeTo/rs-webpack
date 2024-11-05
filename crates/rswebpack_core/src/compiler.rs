@@ -148,7 +148,7 @@ impl Compiler {
 
     pub fn run(&mut self) {
         let plugin_driver = self.plugin_driver.clone();
-        plugin_driver.compiler_hooks.test.call(self);
+        plugin_driver.compiler_hooks.before_run.call(self);
         // let resolved_entry = Path::new(&self.root).join(&self.config.entry);
         // self.build_module(resolved_entry, true);
         // self.emit_file();
