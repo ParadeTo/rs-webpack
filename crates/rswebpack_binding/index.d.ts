@@ -7,11 +7,14 @@ export interface RawOutput {
   path: string
   filename: string
 }
+
+
 export interface RawConfig {
   root: string
   entry: string
   output: RawOutput
 }
+
 export declare class RsWebpack {
   constructor(rawConfig: RawConfig)
   run(): void

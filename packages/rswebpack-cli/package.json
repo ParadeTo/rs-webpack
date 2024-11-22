@@ -1,10 +1,19 @@
 {
   "name": "@rswebpack/cli",
+  "scripts": {
+    "start": "ts-node src/index.ts"
+  },
   "dependencies": {
-    "@rswebpack/binding": "workspace:*",
+    "@rswebpack/core": "workspace:*",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.3",
     "yargs-parser": "^21.1.1"
   },
   "bin": {
-    "rswebpack": "./index.js"
+    "rswebpack": "src/index.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^22.9.1",
+    "@types/yargs-parser": "^21.0.3"
   }
 }
