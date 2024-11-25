@@ -51,8 +51,8 @@ impl RsWebpack {
   }
 
   #[napi]
-  pub fn run(&mut self) {
-    self.compiler.as_mut().run();
+  pub async unsafe fn run(&mut self) {
+    self.compiler.as_mut().run().await;
   }
 
   #[napi]

@@ -1,5 +1,5 @@
-import {JsCompiler, RegisterJsTapKind, RegisterJsTaps, RsWebpack as BindingRsWebpack} from "@rswebpack/binding"
-import {SyncHook} from '@rspack/lite-tapable'
+import {JsCompiler, JsTap, RegisterJsTapKind, RegisterJsTaps, RsWebpack as BindingRsWebpack} from "@rswebpack/binding"
+import * as liteTapable from '@rspack/lite-tapable'
 
 abstract class Plugin {
      abstract apply(compiler: Compiler): void
@@ -21,32 +21,31 @@ export interface RawConfig {
 export class Compiler {
     bindingRsWebpack: BindingRsWebpack
     hooks: {
-        beforeRun: SyncHook<[JsCompiler]>;
+        beforeRun: liteTapable.SyncHook<[JsCompiler]>;
     }
     registers?: RegisterJsTaps;
 
     constructor(props: RawConfig) {
         this.hooks = {
-            beforeRun: new SyncHook(['compiler'])
+            beforeRun: new liteTapable.SyncHook(['compiler'])
         }
         const {plugins} = props
         plugins.forEach(plugin => {
             plugin.apply(this)
         })
         this.registers = {
-            registerBeforeRunTaps: (stages: Array<number>) => stages.map(stage => {
-                    return {
-                        function: (compiler: JsCompiler) => {
-                            console.log(11111)
-                            this.hooks.beforeRun.call(compiler);
-                        },
-                        stage
-                    }
+            registerBeforeRunTaps: this.#createHookRegisterTaps(
+                RegisterJsTapKind.BeforeRun,
+                () => this.hooks.beforeRun,
+                queried => (native: JsCompiler) => {
+                    console.log('native', native)
+                    queried.call(native);
                 }
             )
         }
         this.bindingRsWebpack = new BindingRsWebpack(props, this.registers)
         this.bindingRsWebpack.setNonSkippableRegisters([RegisterJsTapKind.BeforeRun]);
+
         // for (const { getHook, getHookMap, registerKind } of Object.values(
         //     this.registers!
         // )) {
@@ -65,9 +64,44 @@ export class Compiler {
         // this.bindingRsWebpack.setNonSkippableRegisters()
     }
 
-    run() {
+    async run() {
         // this.hooks.beforeRun.call(this)
         console.log(222)
-        this.bindingRsWebpack.run()
+        await this.bindingRsWebpack.run()
     }
+
+    #createHookRegisterTaps<T, R, A>(
+        registerKind: RegisterJsTapKind,
+        getHook: () => liteTapable.Hook<T, R, A>,
+        createTap: (queried: liteTapable.QueriedHook<T, R, A>) => any
+    ): (stages: number[]) => JsTap[] {
+        const getTaps = (stages: number[]) => {
+            const hook = getHook();
+            if (!hook.isUsed()) return [];
+            const breakpoints = [
+                liteTapable.minStage,
+                ...stages,
+                liteTapable.maxStage
+            ];
+            const jsTaps: JsTap[] = [];
+            for (let i = 0; i < breakpoints.length - 1; i++) {
+                const from = breakpoints[i];
+                const to = breakpoints[i + 1];
+                const stageRange = [from, to] as const;
+                const queried = hook.queryStageRange(stageRange);
+                if (!queried.isUsed()) continue;
+                jsTaps.push({
+                    function: createTap(queried),
+                    stage: liteTapable.safeStage(from + 1)
+                });
+            }
+            // this.#decorateJsTaps(jsTaps);
+            return jsTaps;
+        };
+        getTaps.registerKind = registerKind;
+        getTaps.getHook = getHook;
+        return getTaps;
+    }
+
+
 }

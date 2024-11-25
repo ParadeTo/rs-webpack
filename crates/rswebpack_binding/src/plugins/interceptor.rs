@@ -132,6 +132,7 @@ impl<T: 'static + ToNapiValue, R: 'static> RegisterJsTapsInner<T, R> {
   ) -> rswebpack_error::Result<RegisterFunctionOutput<T, R>> {
     let mut used_stages = Vec::from_iter(hook.used_stages());
     used_stages.sort();
+    println!("call_register_impl");
     self.register.call_with_sync(used_stages).await
   }
 
@@ -154,7 +155,7 @@ impl<T: 'static + ToNapiValue, R: 'static> RegisterJsTapsInner<T, R> {
     hook: &impl Hook,
   ) -> rswebpack_error::Result<RegisterFunctionOutput<T, R>> {
     let mut used_stages = Vec::from_iter(hook.used_stages());
-    println!("call_register_blocking_impl {:?}", used_stages);
+    // println!("call_register_blocking_impl {:?}", used_stages);
     used_stages.sort();
     self.register.blocking_call_with_sync(used_stages)
   }
@@ -223,8 +224,10 @@ macro_rules! define_register {
         &self,
         hook: &$tap_hook,
       ) -> rswebpack_error::Result<Vec<<$tap_hook as Hook>::Tap>> {
-        if let Some(non_skippable_registers) = &self.inner.non_skippable_registers && !non_skippable_registers.is_non_skippable(&$kind) {
-          return Ok(Vec::new());
+        if let Some(non_skippable_registers) = &self.inner.non_skippable_registers {
+          if !non_skippable_registers.is_non_skippable(&$kind) {
+            return Ok(Vec::new());
+          }
         }
         let js_taps = self.inner.call_register(hook).await?;
         let js_taps = js_taps
@@ -272,7 +275,7 @@ define_register!(
     RegisterBeforeRunTaps,
     tap = BeforeRunTap<(), ()> @ BeforeRunHook,
     cache = false,
-    sync = true,
+    sync = false,
     kind = RegisterJsTapKind::BeforeRun,
     skip = true,
 );

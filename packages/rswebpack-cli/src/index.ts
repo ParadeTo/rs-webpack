@@ -11,4 +11,6 @@ const config = require(path.resolve(
 ))
 console.log(config)
 const rsWebpack = new Compiler(config)
-rsWebpack.run()
+rsWebpack.run().then(() => {
+    console.log('finish')
+})

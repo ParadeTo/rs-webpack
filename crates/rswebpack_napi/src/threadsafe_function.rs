@@ -77,6 +77,7 @@ impl<T: 'static, R> ThreadsafeFunction<T, R> {
         let env = self.env;
         self.inner
             .call_with_return_value_raw(value, ThreadsafeFunctionCallMode::NonBlocking, {
+                println!("call_with_return");
                 move |r: napi::Result<JsUnknown>| {
                     let r =
                         match r {

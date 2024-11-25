@@ -33,6 +33,7 @@ pub struct Compiler {
     pub plugin_driver: Arc<PluginDriver>,
 }
 
+
 impl Compiler {
     pub fn new(mut config: Config, plugins: Vec<BoxPlugin>) -> Compiler {
         let plugin_driver = PluginDriver::new(plugins);

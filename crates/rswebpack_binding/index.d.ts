@@ -24,7 +24,7 @@ export interface RawConfig {
 }
 export declare class RsWebpack {
   constructor(rawConfig: RawConfig, registerJsTaps: RegisterJsTaps)
-  run(): void
+  run(): Promise<void>
   setNonSkippableRegisters(kinds: Array<RegisterJsTapKind>): void
 }
 export declare class JsCompiler { }
