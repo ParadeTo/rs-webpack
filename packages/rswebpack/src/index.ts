@@ -1,4 +1,4 @@
-import {RsWebpack as BindingRsWebpack} from "@rswebpack/binding"
+import {JsCompiler, RegisterJsTapKind, RegisterJsTaps, RsWebpack as BindingRsWebpack} from "@rswebpack/binding"
 import {SyncHook} from '@rspack/lite-tapable'
 
 abstract class Plugin {
@@ -21,8 +21,9 @@ export interface RawConfig {
 export class Compiler {
     bindingRsWebpack: BindingRsWebpack
     hooks: {
-        beforeRun: SyncHook<[Compiler]>;
+        beforeRun: SyncHook<[JsCompiler]>;
     }
+    registers?: RegisterJsTaps;
 
     constructor(props: RawConfig) {
         this.hooks = {
@@ -32,11 +33,41 @@ export class Compiler {
         plugins.forEach(plugin => {
             plugin.apply(this)
         })
-        this.bindingRsWebpack = new BindingRsWebpack(props)
+        this.registers = {
+            registerBeforeRunTaps: (stages: Array<number>) => stages.map(stage => {
+                    return {
+                        function: (compiler: JsCompiler) => {
+                            console.log(11111)
+                            this.hooks.beforeRun.call(compiler);
+                        },
+                        stage
+                    }
+                }
+            )
+        }
+        this.bindingRsWebpack = new BindingRsWebpack(props, this.registers)
+        this.bindingRsWebpack.setNonSkippableRegisters([RegisterJsTapKind.BeforeRun]);
+        // for (const { getHook, getHookMap, registerKind } of Object.values(
+        //     this.registers!
+        // )) {
+        //     const get = getHook ?? getHookMap;
+        //     const hookOrMap = get();
+        //     if (hookOrMap.isUsed()) {
+        //         kinds.push(registerKind);
+        //     }
+        // }
+        // if (this.#nonSkippableRegisters.join() !== kinds.join()) {
+        //     this.#getInstance((_error, instance) => {
+        //         instance!.setNonSkippableRegisters(kinds);
+        //         this.#nonSkippableRegisters = kinds;
+        //     });
+        // }
+        // this.bindingRsWebpack.setNonSkippableRegisters()
     }
 
     run() {
-        this.hooks.beforeRun.call(this)
+        // this.hooks.beforeRun.call(this)
+        console.log(222)
         this.bindingRsWebpack.run()
     }
 }

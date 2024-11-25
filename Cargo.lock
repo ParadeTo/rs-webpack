@@ -77,6 +77,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "backtrace-ext"
+version = "0.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "537beee3be4a18fb023b570f80e3ae28003db9167a751266b259926e25539d50"
+dependencies = [
+ "backtrace",
+]
+
+[[package]]
 name = "base64-simd"
 version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -214,6 +223,7 @@ dependencies = [
 name = "demo"
 version = "0.1.0"
 dependencies = [
+ "rswebpack_binding",
  "rswebpack_core",
  "rswebpack_error",
  "rswebpack_hook",
@@ -378,6 +388,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d231dfb89cfffdbc30e7fc41579ed6066ad03abda9e567ccafae602b97ec5024"
 
 [[package]]
+name = "hermit-abi"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fbf6a919d6cf397374f7dfeeea91d974c7c0a7221d0d0f4f20d859d329e53fcc"
+
+[[package]]
 name = "home"
 version = "0.5.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -404,6 +420,23 @@ checksum = "e0242819d153cba4b4b05a5a8f2a7e9bbf97b6055b2a002b395c96b5ff3c0222"
 dependencies = [
  "cfg-if",
 ]
+
+[[package]]
+name = "is-terminal"
+version = "0.4.13"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "261f68e344040fbd0edea105bef17c66edf46f984ddb1115b775ce31be948f4b"
+dependencies = [
+ "hermit-abi 0.4.0",
+ "libc",
+ "windows-sys 0.52.0",
+]
+
+[[package]]
+name = "is_ci"
+version = "1.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7655c9839580ee829dfacba1d1278c2b7883e50a277ff7541299489d6bdfdc45"
 
 [[package]]
 name = "itertools"
@@ -523,16 +556,48 @@ dependencies = [
 
 [[package]]
 name = "miette"
+version = "5.10.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "59bb584eaeeab6bd0226ccf3509a69d7936d148cf3d036ad350abe35e8c6856e"
+dependencies = [
+ "backtrace",
+ "backtrace-ext",
+ "is-terminal",
+ "miette-derive 5.10.0",
+ "once_cell",
+ "owo-colors 3.5.0",
+ "supports-color",
+ "supports-hyperlinks",
+ "supports-unicode",
+ "terminal_size",
+ "textwrap 0.15.2",
+ "thiserror",
+ "unicode-width",
+]
+
+[[package]]
+name = "miette"
 version = "7.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4edc8853320c2a0dab800fbda86253c8938f6ea88510dc92c5f1ed20e794afc1"
 dependencies = [
  "cfg-if",
- "miette-derive",
- "owo-colors",
- "textwrap",
+ "miette-derive 7.2.0",
+ "owo-colors 4.1.0",
+ "textwrap 0.16.1",
  "thiserror",
  "unicode-width",
+]
+
+[[package]]
+name = "miette-derive"
+version = "5.10.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "49e7bc1560b95a3c4a25d03de42fe76ca718ab92d1a22a55b9b4cf67b3ae635c"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
 ]
 
 [[package]]
@@ -561,23 +626,10 @@ version = "1.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "80e04d1dcff3aae0704555fe5fee3bcfaf3d1fdf8a7e521d5b9d2b42acb52cec"
 dependencies = [
- "hermit-abi",
+ "hermit-abi 0.3.9",
  "libc",
  "wasi",
  "windows-sys 0.52.0",
-]
-
-[[package]]
-name = "napi"
-version = "2.16.13"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "214f07a80874bb96a8433b3cdfc84980d56c7b02e1a0d7ba4ba0db5cef785e2b"
-dependencies = [
- "bitflags",
- "ctor",
- "napi-derive",
- "napi-sys",
- "once_cell",
 ]
 
 [[package]]
@@ -613,6 +665,23 @@ dependencies = [
  "regex",
  "semver",
  "syn",
+]
+
+[[package]]
+name = "napi-h"
+version = "2.16.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8122073a4a01e851f0a9bbc4322b8f8cdf6f9faafc260f005cfd782098aff4fb"
+dependencies = [
+ "anyhow",
+ "bitflags",
+ "ctor",
+ "napi-derive",
+ "napi-sys",
+ "once_cell",
+ "serde",
+ "serde_json",
+ "tokio",
 ]
 
 [[package]]
@@ -684,6 +753,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1261fe7e33c73b354eab43b1273a57c8f967d0391e80353e51f764ac02cf6775"
 
 [[package]]
+name = "oneshot"
+version = "0.1.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e296cf87e61c9cfc1a61c3c63a0f7f286ed4554e0e22be84e8a38e1d264a2a29"
+
+[[package]]
 name = "outref"
 version = "0.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -694,6 +769,12 @@ name = "overload"
 version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b15813163c1d831bf4a13c3610c05c0d03b39feb07f7e09fa234dac9b15aaf39"
+
+[[package]]
+name = "owo-colors"
+version = "3.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c1b04fb49957986fdce4d6ee7a65027d55d4b6d2265e5848bbb507b58ccfdb6f"
 
 [[package]]
 name = "owo-colors"
@@ -793,10 +874,10 @@ version = "0.31.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "da1421cd82c209a7dfc830fdd09b5c6372e28dfc419e9e67868c6159ab5c127b"
 dependencies = [
- "miette",
- "owo-colors",
+ "miette 7.2.0",
+ "owo-colors 4.1.0",
  "rustc-hash 2.0.0",
- "textwrap",
+ "textwrap 0.16.1",
  "unicode-width",
 ]
 
@@ -905,7 +986,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5c6a6c56f8482e48b6b7a953e55efe59ea55a0f00451a3f3aaf3c09c955c11c0"
 dependencies = [
  "compact_str",
- "miette",
+ "miette 7.2.0",
  "oxc_allocator",
  "oxc_ast_macros",
  "serde",
@@ -1172,12 +1253,17 @@ checksum = "2b15c43186be67a4fd63bee50d0303afffcef381492ebe2c5d87f324e1b8815c"
 
 [[package]]
 name = "rswebpack_binding"
-version = "0.0.0"
+version = "0.1.0"
 dependencies = [
- "napi",
  "napi-build",
  "napi-derive",
+ "napi-h",
+ "once_cell",
  "rswebpack_core",
+ "rswebpack_error",
+ "rswebpack_hook",
+ "rswebpack_napi",
+ "tokio",
 ]
 
 [[package]]
@@ -1207,6 +1293,8 @@ name = "rswebpack_error"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "miette 5.10.0",
+ "thiserror",
 ]
 
 [[package]]
@@ -1227,6 +1315,16 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn",
+]
+
+[[package]]
+name = "rswebpack_napi"
+version = "0.1.0"
+dependencies = [
+ "napi-h",
+ "oneshot",
+ "rswebpack_error",
+ "tokio",
 ]
 
 [[package]]
@@ -1447,6 +1545,34 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a2eb9349b6444b326872e140eb1cf5e7c522154d69e7a0ffb0fb81c06b37543f"
 
 [[package]]
+name = "supports-color"
+version = "2.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d6398cde53adc3c4557306a96ce67b302968513830a77a95b2b17305d9719a89"
+dependencies = [
+ "is-terminal",
+ "is_ci",
+]
+
+[[package]]
+name = "supports-hyperlinks"
+version = "2.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f84231692eb0d4d41e4cdd0cabfdd2e6cd9e255e65f80c9aa7c98dd502b4233d"
+dependencies = [
+ "is-terminal",
+]
+
+[[package]]
+name = "supports-unicode"
+version = "2.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f850c19edd184a205e883199a261ed44471c81e39bd95b1357f5febbef00e77a"
+dependencies = [
+ "is-terminal",
+]
+
+[[package]]
 name = "syn"
 version = "2.0.85"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1455,6 +1581,27 @@ dependencies = [
  "proc-macro2",
  "quote",
  "unicode-ident",
+]
+
+[[package]]
+name = "terminal_size"
+version = "0.1.17"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "633c1a546cee861a1a6d0dc69ebeca693bf4296661ba7852b9d21d159e0506df"
+dependencies = [
+ "libc",
+ "winapi",
+]
+
+[[package]]
+name = "textwrap"
+version = "0.15.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b7b3e525a49ec206798b40326a44121291b530c963cfb01018f63e135bac543d"
+dependencies = [
+ "smawk",
+ "unicode-linebreak",
+ "unicode-width",
 ]
 
 [[package]]

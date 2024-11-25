@@ -310,6 +310,8 @@ if (!nativeBinding) {
   throw new Error(`Failed to load native binding`)
 }
 
-const { RsWebpack } = nativeBinding
+const { RegisterJsTapKind, RsWebpack, JsCompiler } = nativeBinding
 
+module.exports.RegisterJsTapKind = RegisterJsTapKind
 module.exports.RsWebpack = RsWebpack
+module.exports.JsCompiler = JsCompiler

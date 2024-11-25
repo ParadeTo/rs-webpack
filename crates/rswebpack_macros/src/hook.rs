@@ -109,8 +109,8 @@ impl DefineHookInput {
           }
 
           pub struct #hook_name {
-            taps: Vec<Box<dyn #trait_name + Send + Sync>>,
-            interceptors: Vec<Box<dyn rswebpack_hook::Interceptor<Self> + Send + Sync>>,
+            pub taps: Vec<Box<dyn #trait_name + Send + Sync>>,
+            pub interceptors: Vec<Box<dyn rswebpack_hook::Interceptor<Self> + Send + Sync>>,
           }
 
           impl rswebpack_hook::Hook for #hook_name {
@@ -206,6 +206,7 @@ impl ExecKind {
         quote! {
           let mut additional_taps = std::vec::Vec::new();
           for interceptor in self.interceptors.iter() {
+            println!("call interceptor");
             #call
           }
           let mut all_taps = std::vec::Vec::new();
@@ -221,6 +222,7 @@ impl ExecKind {
             Self::AsyncSeries => {
                 quote! {
                   #additional_taps
+                  println!("all_taps {:?}", all_taps.len());
                   for tap in all_taps {
                     tap.run(#args).await?;
                   }
@@ -259,6 +261,7 @@ impl ExecKind {
             Self::SyncSeries => {
                 quote! {
                   #additional_taps
+                  println!("all_taps {:?}", all_taps.len());
                   for tap in all_taps {
                     tap.run(#args)?;
                   }
