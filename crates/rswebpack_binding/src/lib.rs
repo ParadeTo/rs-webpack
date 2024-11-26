@@ -1,13 +1,14 @@
 #![deny(clippy::all)]
 
-use crate::plugins::{JsHooksAdapterPlugin};
-use crate::plugins::interceptor::{RegisterJsTaps, RegisterBeforeRunTaps, RegisterJsTapKind};
+use crate::plugins::interceptor::{RegisterBeforeRunTaps, RegisterJsTapKind, RegisterJsTaps};
+use crate::plugins::JsHooksAdapterPlugin;
 use napi::Result;
 use raw_config::RawConfig;
 use rswebpack_core::compiler::Compiler;
+use rswebpack_core::hooks::BeforeRun;
 use rswebpack_core::plugin::driver::PluginDriver;
 use rswebpack_core::plugin::{BoxPlugin, PluginExt};
-use rswebpack_hook::Hook;
+use rswebpack_hook::{plugin, plugin_hook, Hook};
 use std::sync::Arc;
 
 #[macro_use]
@@ -24,7 +25,6 @@ pub struct RsWebpack {
 
 #[napi]
 pub struct JsCompiler(pub(crate) &'static mut Compiler);
-
 
 #[napi]
 impl RsWebpack {
@@ -46,18 +46,18 @@ impl RsWebpack {
     //   ));
     Ok(Self {
       compiler: Box::new(compiler),
-      js_plugin: js_plugin
+      js_plugin: js_plugin,
     })
   }
 
   #[napi]
-  pub async unsafe fn run(&mut self) {
-    self.compiler.as_mut().run().await;
+  pub fn run(&mut self) {
+    self.compiler.as_mut().run();
   }
 
   #[napi]
   pub fn set_non_skippable_registers(&self, kinds: Vec<RegisterJsTapKind>) {
     self.js_plugin.set_non_skippable_registers(kinds)
   }
-
 }
+

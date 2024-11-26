@@ -1,4 +1,4 @@
-import {JsCompiler, JsTap, RegisterJsTapKind, RegisterJsTaps, RsWebpack as BindingRsWebpack} from "@rswebpack/binding"
+import {JsTap, RegisterJsTapKind, RegisterJsTaps, RsWebpack as BindingRsWebpack} from "@rswebpack/binding"
 import * as liteTapable from '@rspack/lite-tapable'
 
 abstract class Plugin {
@@ -21,13 +21,15 @@ export interface RawConfig {
 export class Compiler {
     bindingRsWebpack: BindingRsWebpack
     hooks: {
-        beforeRun: liteTapable.SyncHook<[JsCompiler]>;
+        beforeRun: liteTapable.SyncHook<[string]>;
+        beforeRunSync: liteTapable.SyncHook<[string]>;
     }
     registers?: RegisterJsTaps;
 
     constructor(props: RawConfig) {
         this.hooks = {
-            beforeRun: new liteTapable.SyncHook(['compiler'])
+            beforeRun: new liteTapable.SyncHook(['root']),
+            beforeRunSync: new liteTapable.SyncHook(['root']),
         }
         const {plugins} = props
         plugins.forEach(plugin => {
@@ -37,14 +39,22 @@ export class Compiler {
             registerBeforeRunTaps: this.#createHookRegisterTaps(
                 RegisterJsTapKind.BeforeRun,
                 () => this.hooks.beforeRun,
-                queried => (native: JsCompiler) => {
-                    console.log('native', native)
+                queried => (native: string) => {
+                    console.log('before run', )
+                    queried.call(native);
+                }
+            ),
+            registerBeforeRunSyncTaps: this.#createHookRegisterTaps(
+                RegisterJsTapKind.BeforeRunSync,
+                () => this.hooks.beforeRunSync,
+                queried => (native: string) => {
+                    console.log('before run sync', native)
                     queried.call(native);
                 }
             )
         }
         this.bindingRsWebpack = new BindingRsWebpack(props, this.registers)
-        this.bindingRsWebpack.setNonSkippableRegisters([RegisterJsTapKind.BeforeRun]);
+        this.bindingRsWebpack.setNonSkippableRegisters([RegisterJsTapKind.BeforeRunSync]);
 
         // for (const { getHook, getHookMap, registerKind } of Object.values(
         //     this.registers!

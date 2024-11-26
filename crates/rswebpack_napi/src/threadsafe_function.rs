@@ -77,13 +77,14 @@ impl<T: 'static, R> ThreadsafeFunction<T, R> {
         let env = self.env;
         self.inner
             .call_with_return_value_raw(value, ThreadsafeFunctionCallMode::NonBlocking, {
-                println!("call_with_return");
                 move |r: napi::Result<JsUnknown>| {
                     let r =
                         match r {
                             Err(err) => Err(err
                                 .into_rswebpack_error_with_detail(&unsafe { Env::from_raw(env) })),
-                            Ok(o) => unsafe { D::from_napi_value(env, o.raw()) }.into_diagnostic(),
+                            Ok(o) => {
+                                unsafe { D::from_napi_value(env, o.raw()) }.into_diagnostic()
+                            },
                         };
                     tx.send(r)
                         .unwrap_or_else(|_| panic!("failed to send tsfn value"));

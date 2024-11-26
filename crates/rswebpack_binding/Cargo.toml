@@ -16,6 +16,7 @@ rswebpack_napi       = { version = "0.1.0", path = "../rswebpack_napi" }
 tokio = {workspace = true}
 once_cell = {workspace = true}
 napi = {workspace = true}
+tracing            = { workspace = true}
 
 [build-dependencies]
 napi-build = { workspace = true }

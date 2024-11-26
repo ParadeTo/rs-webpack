@@ -193,7 +193,7 @@ pub fn expand_fn(args: HookArgs, input: syn::ItemFn) -> proc_macro::TokenStream 
     });
 
     let attr = if is_async {
-        Some(quote! { #[::rspack_hook::__macro_helper::async_trait] })
+        Some(quote! { #[::rswebpack_hook::__macro_helper::async_trait] })
     } else {
         None
     };

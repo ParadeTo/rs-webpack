@@ -1,6 +1,4 @@
-use rswebpack_binding::interceptor::{
-    NonSkippableRegisters, RegisterBeforeRunTaps, RegisterJsTapKind, RegisterJsTaps,
-};
+
 use rswebpack_core::compiler::Compiler;
 use rswebpack_core::config::{Config, Output};
 use rswebpack_core::hooks::{BeforeRun, BeforeRunHook};
@@ -13,7 +11,7 @@ use rswebpack_macros::{plugin, plugin_hook};
 struct BeforeRunHookTap;
 
 #[plugin_hook(BeforeRun for BeforeRunHookTap)]
-fn before_run(&self, compiler: &mut Compiler) -> Result<()> {
+async fn before_run(&self, compiler: &mut Compiler) -> Result<()> {
     println!("Root is {}", compiler.root);
     Ok(())
 }

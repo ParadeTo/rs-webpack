@@ -148,15 +148,14 @@ impl Compiler {
         file.write_all(code.as_bytes()).expect("write output error");
     }
 
-     pub async fn run(&mut self) {
+     pub fn run(&mut self) {
         let plugin_driver = self.plugin_driver.clone();
-        println!("Compiler run");
-        println!("{}", plugin_driver.compiler_hooks.before_run.interceptors.len());
-        let res = plugin_driver.compiler_hooks.before_run.call(self).await;
-        match res {
-            Ok(ok) => {        println!("{}",plugin_driver.compiler_hooks.before_run.interceptors.len()); },
-            Err(err) => { println!("Error: {}", err); }
-        };
+        // let res = plugin_driver.compiler_hooks.before_run.call(self).await;
+        plugin_driver.compiler_hooks.before_run_sync.call(self);
+        // match res {
+        //     Ok(ok) => {        println!("{}",plugin_driver.compiler_hooks.before_run.interceptors.len()); },
+        //     Err(err) => { println!("Error: {}", err); }
+        // };
         // println!("{}",plugin_driver.compiler_hooks.before_run.interceptors.len());
         // let resolved_entry = Path::new(&self.root).join(&self.config.entry);
         // self.build_module(resolved_entry, true);

@@ -8,10 +8,12 @@ export interface JsTap {
   stage: number
 }
 export const enum RegisterJsTapKind {
-  BeforeRun = 0
+  BeforeRun = 0,
+  BeforeRunSync = 1
 }
 export interface RegisterJsTaps {
-  registerBeforeRunTaps: (stages: Array<number>) => Array<{ function: ((arg: JsCompiler) => void); stage: number; }>
+  registerBeforeRunTaps: (stages: Array<number>) => Array<{ function: ((arg: string) => void); stage: number; }>
+  registerBeforeRunSyncTaps: (stages: Array<number>) => Array<{ function: ((arg: string) => void); stage: number; }>
 }
 export interface RawOutput {
   path: string
@@ -24,7 +26,7 @@ export interface RawConfig {
 }
 export declare class RsWebpack {
   constructor(rawConfig: RawConfig, registerJsTaps: RegisterJsTaps)
-  run(): Promise<void>
+  run(): void
   setNonSkippableRegisters(kinds: Array<RegisterJsTapKind>): void
 }
 export declare class JsCompiler { }

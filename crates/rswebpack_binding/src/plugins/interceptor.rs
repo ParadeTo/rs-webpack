@@ -1,7 +1,7 @@
 use napi::bindgen_prelude::{FromNapiValue, ToNapiValue};
 use napi::{Env, JsFunction, NapiRaw};
 use rswebpack_core::compiler::Compiler;
-use rswebpack_core::hooks::{BeforeRun, BeforeRunHook};
+use rswebpack_core::hooks::{BeforeRun, BeforeRunHook, BeforeRunSync, BeforeRunSyncHook};
 use rswebpack_hook::__macro_helper::async_trait;
 use rswebpack_hook::{Hook, Interceptor};
 use rswebpack_napi::threadsafe_function::ThreadsafeFunction;
@@ -165,6 +165,7 @@ impl<T: 'static + ToNapiValue, R: 'static> RegisterJsTapsInner<T, R> {
 #[derive(Debug, PartialEq, Eq)]
 pub enum RegisterJsTapKind {
   BeforeRun,
+  BeforeRunSync
 }
 
 #[derive(Default, Clone, Debug)]
@@ -266,24 +267,47 @@ macro_rules! define_register {
 #[napi(object, object_to_js = false)]
 pub struct RegisterJsTaps {
   #[napi(
-    ts_type = "(stages: Array<number>) => Array<{ function: ((arg: JsCompiler) => void); stage: number; }>"
+    ts_type = "(stages: Array<number>) => Array<{ function: ((arg: string) => void); stage: number; }>"
   )]
-  pub register_before_run_taps: RegisterFunction<(), ()>,
+  pub register_before_run_taps: RegisterFunction<String, ()>,
+  #[napi(
+    ts_type = "(stages: Array<number>) => Array<{ function: ((arg: string) => void); stage: number; }>"
+  )]
+  pub register_before_run_sync_taps: RegisterFunction<String, ()>,
 }
 
 define_register!(
     RegisterBeforeRunTaps,
-    tap = BeforeRunTap<(), ()> @ BeforeRunHook,
+    tap = BeforeRunTap<String, ()> @ BeforeRunHook,
     cache = false,
     sync = false,
     kind = RegisterJsTapKind::BeforeRun,
     skip = true,
 );
 
+define_register!(
+    RegisterBeforeRunSyncTaps,
+    tap = BeforeRunSyncTap<String, ()> @ BeforeRunSyncHook,
+    cache = false,
+    sync = true,
+    kind = RegisterJsTapKind::BeforeRunSync,
+    skip = true,
+);
+
 #[async_trait]
 impl BeforeRun for BeforeRunTap {
   async fn run(&self, compiler: &mut Compiler) -> rswebpack_error::Result<()> {
-    self.function.call_with_sync(()).await
+    self.function.call_with_sync(compiler.root.clone()).await
+  }
+
+  fn stage(&self) -> i32 {
+    self.stage
+  }
+}
+
+impl BeforeRunSync for BeforeRunSyncTap {
+  fn run(&self, compiler: &mut Compiler) -> rswebpack_error::Result<()> {
+    self.function.blocking_call_with_sync(compiler.root.clone())
   }
 
   fn stage(&self) -> i32 {

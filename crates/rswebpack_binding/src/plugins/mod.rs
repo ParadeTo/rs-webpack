@@ -1,4 +1,7 @@
-use crate::plugins::interceptor::{NonSkippableRegisters, RegisterBeforeRunTaps, RegisterJsTapKind, RegisterJsTaps};
+use crate::plugins::interceptor::{
+  NonSkippableRegisters, RegisterBeforeRunSyncTaps, RegisterBeforeRunTaps, RegisterJsTapKind,
+  RegisterJsTaps,
+};
 use napi::Env;
 use napi::Result;
 use rswebpack_core::compiler::Compiler;
@@ -14,7 +17,8 @@ pub mod interceptor;
 #[derive(Clone)]
 pub struct JsHooksAdapterPlugin {
   register_before_run_taps: RegisterBeforeRunTaps,
-  non_skippable_registers: NonSkippableRegisters
+  register_before_run_sync_taps: RegisterBeforeRunSyncTaps,
+  non_skippable_registers: NonSkippableRegisters,
 }
 
 impl fmt::Debug for JsHooksAdapterPlugin {
@@ -36,12 +40,16 @@ impl Plugin for JsHooksAdapterPlugin {
   }
 
   fn apply(&self, _ctx: PluginContext<&mut ApplyContext>) -> rswebpack_error::Result<()> {
-    println!("JsHooksAdapterPlugin apply called");
     _ctx
       .context
       .compiler_hooks
       .before_run
       .intercept(self.register_before_run_taps.clone());
+    _ctx
+      .context
+      .compiler_hooks
+      .before_run_sync
+      .intercept(self.register_before_run_sync_taps.clone());
     Ok(())
   }
 }
@@ -55,6 +63,10 @@ impl JsHooksAdapterPlugin {
           register_js_taps.register_before_run_taps,
           non_skippable_registers.clone(),
         ),
+        register_before_run_sync_taps: RegisterBeforeRunSyncTaps::new(
+          register_js_taps.register_before_run_sync_taps,
+          non_skippable_registers.clone(),
+        ),
         non_skippable_registers,
       }
       .into(),
@@ -63,7 +75,7 @@ impl JsHooksAdapterPlugin {
 
   pub fn set_non_skippable_registers(&self, kinds: Vec<RegisterJsTapKind>) {
     self
-        .non_skippable_registers
-        .set_non_skippable_registers(kinds);
+      .non_skippable_registers
+      .set_non_skippable_registers(kinds);
   }
 }
