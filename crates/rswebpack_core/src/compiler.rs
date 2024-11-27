@@ -11,6 +11,7 @@ use oxc_semantic::SemanticBuilder;
 use oxc_span::SourceType;
 use oxc_traverse::traverse_mut;
 use pathdiff::diff_paths;
+use rswebpack_hook::Hook;
 use sailfish::TemplateSimple;
 use std::{
     cell::RefCell,
@@ -29,8 +30,9 @@ pub struct Compiler {
     pub root: String,
     modules: HashMap<String, String>,
     assets: HashMap<String, String>,
-    plugin_driver: Arc<PluginDriver>,
+    pub plugin_driver: Arc<PluginDriver>,
 }
+
 
 impl Compiler {
     pub fn new(mut config: Config, plugins: Vec<BoxPlugin>) -> Compiler {
@@ -146,9 +148,15 @@ impl Compiler {
         file.write_all(code.as_bytes()).expect("write output error");
     }
 
-    pub fn run(&mut self) {
+     pub async fn run(&mut self) {
         let plugin_driver = self.plugin_driver.clone();
-        plugin_driver.compiler_hooks.before_run.call(self);
+        plugin_driver.compiler_hooks.before_run.call(self).await;
+        // plugin_driver.compiler_hooks.before_run_sync.call(self);
+        // match res {
+        //     Ok(ok) => {        println!("{}",plugin_driver.compiler_hooks.before_run.interceptors.len()); },
+        //     Err(err) => { println!("Error: {}", err); }
+        // };
+        // println!("{}",plugin_driver.compiler_hooks.before_run.interceptors.len());
         // let resolved_entry = Path::new(&self.root).join(&self.config.entry);
         // self.build_module(resolved_entry, true);
         // self.emit_file();

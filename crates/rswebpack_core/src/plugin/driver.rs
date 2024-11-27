@@ -1,7 +1,7 @@
+use crate::config::Config;
 use crate::hooks::CompilerHooks;
 use crate::plugin::{ApplyContext, Plugin, PluginContext};
 use std::sync::Arc;
-use crate::config::Config;
 
 pub struct PluginDriver {
     pub plugins: Vec<Box<dyn Plugin>>,

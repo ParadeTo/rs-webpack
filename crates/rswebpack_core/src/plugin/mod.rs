@@ -4,7 +4,7 @@ use crate::hooks::CompilerHooks;
 use rswebpack_error::Result;
 
 #[async_trait::async_trait]
-pub trait Plugin: std::fmt::Debug {
+pub trait Plugin: std::fmt::Debug + Send + Sync {
     fn name(&self) -> &'static str {
         "unknown"
     }
@@ -15,6 +15,17 @@ pub trait Plugin: std::fmt::Debug {
 }
 
 pub type BoxPlugin = Box<dyn Plugin>;
+
+pub trait PluginExt {
+    fn boxed(self) -> BoxPlugin;
+}
+
+impl<T: Plugin + 'static> PluginExt for T {
+    fn boxed(self) -> BoxPlugin {
+        Box::new(self)
+    }
+}
+
 
 #[derive(Debug, Default)]
 pub struct PluginContext<T = ()> {
