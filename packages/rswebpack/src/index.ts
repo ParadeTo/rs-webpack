@@ -40,7 +40,6 @@ export class Compiler {
                 RegisterJsTapKind.BeforeRun,
                 () => this.hooks.beforeRun,
                 queried => (native: string) => {
-                    console.log('before run', )
                     queried.call(native);
                 }
             ),
@@ -54,7 +53,7 @@ export class Compiler {
             )
         }
         this.bindingRsWebpack = new BindingRsWebpack(props, this.registers)
-        this.bindingRsWebpack.setNonSkippableRegisters([RegisterJsTapKind.BeforeRunSync]);
+        this.bindingRsWebpack.setNonSkippableRegisters([RegisterJsTapKind.BeforeRun]);
 
         // for (const { getHook, getHookMap, registerKind } of Object.values(
         //     this.registers!

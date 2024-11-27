@@ -148,10 +148,10 @@ impl Compiler {
         file.write_all(code.as_bytes()).expect("write output error");
     }
 
-     pub fn run(&mut self) {
+     pub async fn run(&mut self) {
         let plugin_driver = self.plugin_driver.clone();
-        // let res = plugin_driver.compiler_hooks.before_run.call(self).await;
-        plugin_driver.compiler_hooks.before_run_sync.call(self);
+        plugin_driver.compiler_hooks.before_run.call(self).await;
+        // plugin_driver.compiler_hooks.before_run_sync.call(self);
         // match res {
         //     Ok(ok) => {        println!("{}",plugin_driver.compiler_hooks.before_run.interceptors.len()); },
         //     Err(err) => { println!("Error: {}", err); }
