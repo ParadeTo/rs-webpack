@@ -1,0 +1,10 @@
+[package]
+name = "rswebpack_error"
+version = "0.1.0"
+edition = "2021"
+
+
+[dependencies]
+anyhow ={ workspace = true}
+miette             = { version = "5", features = ["fancy"] }
+thiserror          = "1"

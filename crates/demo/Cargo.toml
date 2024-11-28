@@ -1,0 +1,13 @@
+[package]
+name = "demo"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+rswebpack_error        = { version = "0.1.0", path = "../rswebpack_error" }
+rswebpack_macros       = { version = "0.1.0", path = "../rswebpack_macros" }
+rswebpack_hook  = { version = "0.1.0", path = "../rswebpack_hook" }
+rswebpack_binding  = { version = "0.1.0", path = "../rswebpack_binding" }
+rswebpack_core  = { version = "0.1.0", path = "../rswebpack_core" }
+tokio = {workspace = true}
+tracing            = { workspace = true}
